@@ -1,5 +1,0 @@
-// Minimal zero-dependency static server: node server.js [port]
-const http=require("http"),fs=require("fs"),path=require("path");
-const port=process.argv[2]||8080,root=__dirname;
-const types={".html":"text/html",".css":"text/css",".js":"text/javascript",".webp":"image/webp",".png":"image/png",".jpg":"image/jpeg",".jpeg":"image/jpeg",".gif":"image/gif",".svg":"image/svg+xml",".ico":"image/x-icon",".woff":"font/woff",".woff2":"font/woff2",".ttf":"font/ttf",".eot":"application/vnd.ms-fontobject"};
-http.createServer((req,res)=>{let p=decodeURIComponent(req.url.split("?")[0]);if(p==="/")p="/index.html";if(p.endsWith("/"))p+="index.html";const f=path.join(root,path.normalize(p));if(!f.startsWith(root)){res.writeHead(403);return res.end()}fs.readFile(f,(e,d)=>{if(e){const h=path.join(f,"index.html");return fs.readFile(h,(e2,d2)=>{if(e2){res.writeHead(404);return res.end("Not found")}res.writeHead(200,{"Content-Type":"text/html"});res.end(d2)})}res.writeHead(200,{"Content-Type":types[path.extname(f)]||"application/octet-stream"});res.end(d)})}).listen(port,()=>console.log("Serving on http://localhost:"+port));
