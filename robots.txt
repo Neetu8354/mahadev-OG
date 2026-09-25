@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mahadevbookbets.live/sitemap.xml
+Sitemap: https://www.mahadevbookbets.live/sitemap.xml
