@@ -47,7 +47,10 @@ export default async function middleware(req) {
   const canon = base + p;
   if (t.includes(PRIMARY)) t = t.split(PRIMARY).join(base);
   // bare domain mentions in visible text follow the request host too
-  if (host !== PRIMARY_HOST) t = t.split(PRIMARY_HOST).join(host);
+  if (host !== PRIMARY_HOST) {
+    t = t.split(PRIMARY_HOST).join(host);
+    t = t.split("mahadevbookbets.live").join(host);
+  }
   if (/property="og:url"/.test(t))
     t = t.replace(/property="og:url" content="[^"]*"/, `property="og:url" content="${canon}"`);
   if (/rel="canonical"/i.test(t))
