@@ -4,7 +4,7 @@
 // (<link rel="canonical">, og:url, absolute URLs).
 
 const PRIMARY = "https://www.mahadevbookbets.live";
-const ORIGINAL = "https://mahadevbookz.com";
+const PRIMARY_HOST = "www.mahadevbookbets.live";
 
 export const config = { matcher: "/:path*" };
 
@@ -45,8 +45,9 @@ export default async function middleware(req) {
   let t = await r.text();
 
   const canon = base + p;
-  if (t.includes(ORIGINAL)) t = t.split(ORIGINAL).join(base);
   if (t.includes(PRIMARY)) t = t.split(PRIMARY).join(base);
+  // bare domain mentions in visible text follow the request host too
+  if (host !== PRIMARY_HOST) t = t.split(PRIMARY_HOST).join(host);
   if (/property="og:url"/.test(t))
     t = t.replace(/property="og:url" content="[^"]*"/, `property="og:url" content="${canon}"`);
   if (/rel="canonical"/i.test(t))
