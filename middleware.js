@@ -27,8 +27,8 @@ export default async function middleware(req) {
     );
   }
 
-  // per-domain sitemap.xml (swap host inside the canonical sitemap)
-  if (p === "/sitemap.xml") {
+  // per-domain sitemap files (swap host inside the canonical XML)
+  if (/^\/sitemap[^/]*\.xml$/i.test(p)) {
     const r = await fetchStatic(req);
     if (!r.ok) return r;
     const t = await r.text();
@@ -37,11 +37,24 @@ export default async function middleware(req) {
     });
   }
 
+  // old post URLs moved to /blog/<slug>/
+  if (p === "/blogs.html")
+    return Response.redirect(base + "/blog/", 308);
+
   // only transform HTML pages; everything else serves untouched
   if (!/(\.html?|\/)$/i.test(p)) return;
 
   const r = await fetchStatic(req);
-  if (!r.ok) return r;
+  if (!r.ok) {
+    // 301 old flat post URL to /blog/<slug>/ when it exists
+    const m = p.match(/^\/([^/]+)\.html$/i);
+    if (m) {
+      const target = "/blog/" + m[1] + "/";
+      const chk = await fetch(new URL(target, req.url), { headers: { "x-mw-pass": "1" } });
+      if (chk.ok) return Response.redirect(base + target, 308);
+    }
+    return r;
+  }
   let t = await r.text();
 
   const canon = base + p;
